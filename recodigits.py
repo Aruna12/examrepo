@@ -61,10 +61,12 @@ for cnt in cnts:
 	rect = cv2.minAreaRect(cnt)
 	x,y,w,h = cv2.boundingRect(cnt)
 	cv2.rectangle(output,(x,y),(x+w,y+h),(0,255,0),2)
+	imgs += [output[y:y+h,x:x+w]]
 
 
-
-cv2.drawContours(image, displayCnt, -1, (0, 255, 0), 2)
-#cv2.imshow("output", imgs[0])
+print(len(imgs))
+#cv2.drawContours(image, displayCnt, -1, (0, 255, 0), 2)
+#cv2.imshow("output", output)
+cv2.imshow("output", imgs[4])
 cv2.waitKey(0)
 cv2.destroyAllWindows()
