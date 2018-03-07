@@ -57,7 +57,7 @@ def getNumbers(image, output):
 		# compute the bounding box of the contour
 		rect = cv2.minAreaRect(cnt)
 		x,y,w,h = cv2.boundingRect(cnt)
-		#cv2.rectangle(output,(x,y),(x+w,y+h),(0,255,0),2)
+		cv2.rectangle(output,(x,y),(x+w,y+h),(0,255,0),2)
 		imgs += [output[y:y+h,x:x+w]]
 	return imgs
 
@@ -78,9 +78,57 @@ thresh = cleanup(blkMarks)
 imgs = getNumbers(thresh, marks)
 _, finalImg = convert_image(imgs[2]) #Need to pass negation of finalImg 
 
-#with open('digits_cls.pkl', 'rb') as f:
-#    clf = pickle.load(f, encoding='latin1') 
-#roi = cv2.resize(~finalImg, (28, 28), interpolation=cv2.INTER_AREA)
-#roi = cv2.dilate(~finalImg, 
-img = cv2.resize(~finalImg, (28, 28))
-show_image("lol", img)
+finalImg = cleanup(finalImg)
+img = cv2.resize(finalImg, (28, 28))
+cv2.imwrite("num.png", img)
+
+#show_image("text", img)
+x, y = img.shape
+
+k = 0
+modimg = []
+for i in range(0, 28):
+	for j in range(0, 28):
+		modimg.append(img[i, j])
+
+
+
+
+import numpy as np
+import matplotlib.pyplot as plt
+import pandas as pd
+from sklearn.svm import SVC
+import joblib
+
+# Importing the dataset
+#dataset = pd.read_csv('train.csv')
+#X = dataset.iloc[:, 1:].values
+#y = dataset.iloc[:, 0].values
+
+# Splitting the dataset into the Training set and Test set
+#from sklearn.cross_validation import train_test_split
+#X_train, X_test, y_train, y_test = train_test_split(X, y, test_size = 0.25, random_state = 0)
+
+#from sklearn.preprocessing import StandardScaler
+#sc = StandardScaler()
+#X_train = sc.fit_transform(X_train)
+#X_test = sc.transform(X_test)
+
+# Fitting classifier to the Training set
+# Create your classifier here
+fn = '/home/rkaahean/examreco/pre.pkl'
+clf = joblib.load(fn)
+#classifier = SVC(kernel = 'linear', random_state = 0)
+#classifier.fit(X_train, y_train)
+#_ = joblib.dump(classifier, fn, compress = 9)
+
+modimg = np.array(modimg)
+modimg = modimg.reshape(1, -1)
+y_pred = clf.predict(modimg)
+print(y_pred)
+
+# Making the Confusion Matrix
+#from sklearn.metrics import confusion_matrix
+#cm = confusion_matrix(y_test, y_pred)
+#print(cm)
+
